@@ -2,8 +2,6 @@ package cloud
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 )
 
 // OrganizationService handles Organizations for the Jira instance / API.
@@ -65,26 +63,8 @@ type PropertyKeys struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) GetAllOrganizations(ctx context.Context, start int, limit int, accountID string) (*PagedDTO, *Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization?start=%d&limit=%d", start, limit)
-	if accountID != "" {
-		apiEndPoint += fmt.Sprintf("&accountId=%s", accountID)
-	}
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	v := new(PagedDTO)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return v, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // CreateOrganization creates an organization by
@@ -95,27 +75,8 @@ func (s *OrganizationService) GetAllOrganizations(ctx context.Context, start int
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) CreateOrganization(ctx context.Context, name string) (*Organization, *Response, error) {
-	apiEndPoint := "rest/servicedeskapi/organization"
-
-	organization := OrganizationCreationDTO{
-		Name: name,
-	}
-
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndPoint, organization)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	o := new(Organization)
-	resp, err := s.client.Do(req, &o)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return o, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetOrganization returns details of an
@@ -129,23 +90,8 @@ func (s *OrganizationService) CreateOrganization(ctx context.Context, name strin
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) GetOrganization(ctx context.Context, organizationID int) (*Organization, *Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d", organizationID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	o := new(Organization)
-	resp, err := s.client.Do(req, &o)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return o, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // DeleteOrganization deletes an organization. Note that
@@ -159,21 +105,8 @@ func (s *OrganizationService) GetOrganization(ctx context.Context, organizationI
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) DeleteOrganization(ctx context.Context, organizationID int) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d", organizationID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndPoint, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetPropertiesKeys returns the keys of
@@ -186,23 +119,8 @@ func (s *OrganizationService) DeleteOrganization(ctx context.Context, organizati
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) GetPropertiesKeys(ctx context.Context, organizationID int) (*PropertyKeys, *Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/property", organizationID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	pk := new(PropertyKeys)
-	resp, err := s.client.Do(req, &pk)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return pk, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetProperty returns the value of a property
@@ -214,23 +132,8 @@ func (s *OrganizationService) GetPropertiesKeys(ctx context.Context, organizatio
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) GetProperty(ctx context.Context, organizationID int, propertyKey string) (*EntityProperty, *Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/property/%s", organizationID, propertyKey)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ep := new(EntityProperty)
-	resp, err := s.client.Do(req, &ep)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return ep, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // SetProperty sets the value of a
@@ -243,22 +146,8 @@ func (s *OrganizationService) GetProperty(ctx context.Context, organizationID in
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 // Caller must close resp.Body
 func (s *OrganizationService) SetProperty(ctx context.Context, organizationID int, propertyKey string) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/property/%s", organizationID, propertyKey)
-
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DeleteProperty removes a property from an organization.
@@ -269,22 +158,8 @@ func (s *OrganizationService) SetProperty(ctx context.Context, organizationID in
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) DeleteProperty(ctx context.Context, organizationID int, propertyKey string) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/property/%s", organizationID, propertyKey)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetUsers returns all the users
@@ -298,23 +173,8 @@ func (s *OrganizationService) DeleteProperty(ctx context.Context, organizationID
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) GetUsers(ctx context.Context, organizationID int, start int, limit int) (*PagedDTO, *Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/user?start=%d&limit=%d", organizationID, start, limit)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	users := new(PagedDTO)
-	resp, err := s.client.Do(req, &users)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return users, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // AddUsers adds users to an organization.
@@ -325,21 +185,8 @@ func (s *OrganizationService) GetUsers(ctx context.Context, organizationID int, 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) AddUsers(ctx context.Context, organizationID int, users OrganizationUsersDTO) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/user", organizationID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndPoint, users)
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // RemoveUsers removes users from an organization.
@@ -350,20 +197,6 @@ func (s *OrganizationService) AddUsers(ctx context.Context, organizationID int, 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *OrganizationService) RemoveUsers(ctx context.Context, organizationID int, users OrganizationUsersDTO) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/servicedeskapi/organization/%d/user", organizationID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndPoint, nil)
-	req.Header.Set("Accept", "application/json")
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

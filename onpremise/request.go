@@ -2,8 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 )
 
 // RequestService handles ServiceDesk customer requests for the Jira instance / API.
@@ -62,36 +60,8 @@ type RequestComment struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (r *RequestService) Create(ctx context.Context, requester string, participants []string, request *Request) (*Request, *Response, error) {
-	apiEndpoint := "rest/servicedeskapi/request"
-
-	payload := struct {
-		*Request
-		FieldValues  map[string]string `json:"requestFieldValues,omitempty"`
-		Requester    string            `json:"raiseOnBehalfOf,omitempty"`
-		Participants []string          `json:"requestParticipants,omitempty"`
-	}{
-		Request:      request,
-		FieldValues:  make(map[string]string),
-		Requester:    requester,
-		Participants: participants,
-	}
-
-	for _, field := range request.FieldValues {
-		payload.FieldValues[field.FieldID] = field.Value
-	}
-
-	req, err := r.client.NewRequest(ctx, http.MethodPost, apiEndpoint, payload)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseRequest := new(Request)
-	resp, err := r.client.Do(req, responseRequest)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return responseRequest, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // CreateComment creates a comment on a request.
@@ -101,18 +71,6 @@ func (r *RequestService) Create(ctx context.Context, requester string, participa
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (r *RequestService) CreateComment(ctx context.Context, issueIDOrKey string, comment *RequestComment) (*RequestComment, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/servicedeskapi/request/%v/comment", issueIDOrKey)
-
-	req, err := r.client.NewRequest(ctx, http.MethodPost, apiEndpoint, comment)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseComment := new(RequestComment)
-	resp, err := r.client.Do(req, responseComment)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return responseComment, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

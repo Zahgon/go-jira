@@ -1,21 +1,11 @@
 package onpremise
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
-	"net/url"
-	"reflect"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/fatih/structs"
-	"github.com/google/go-querystring/query"
 	"github.com/trivago/tgo/tcontainer"
 )
 
@@ -146,67 +136,25 @@ type IssueFields struct {
 
 // MarshalJSON is a custom JSON marshal function for the IssueFields structs.
 // It handles Jira custom fields and maps those from / to "Unknowns" key.
-func (i *IssueFields) MarshalJSON() ([]byte, error) {
-	m := structs.Map(i)
-	unknowns, okay := m["Unknowns"]
-	if okay {
-		// if unknowns present, shift all key value from unknown to a level up
-		for key, value := range unknowns.(tcontainer.MarshalMap) {
-			m[key] = value
-		}
-		delete(m, "Unknowns")
-	}
-	return json.Marshal(m)
-}
+func (i *IssueFields) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
+
+// if unknowns present, shift all key value from unknown to a level up
 
 // UnmarshalJSON is a custom JSON marshal function for the IssueFields structs.
 // It handles Jira custom fields and maps those from / to "Unknowns" key.
 func (i *IssueFields) UnmarshalJSON(data []byte) error {
+	_ = "STUB: not implemented"
 
 	// Do the normal unmarshalling first
 	// Details for this way: http://choly.ca/post/go-json-marshalling/
-	type Alias IssueFields
-	aux := &struct {
-		*Alias
-	}{
-		Alias: (*Alias)(i),
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	totalMap := tcontainer.NewMarshalMap()
-	err := json.Unmarshal(data, &totalMap)
-	if err != nil {
-		return err
-	}
-
-	t := reflect.TypeOf(*i)
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		tagDetail := field.Tag.Get("json")
-		if tagDetail == "" {
-			// ignore if there are no tags
-			continue
-		}
-		options := strings.Split(tagDetail, ",")
-
-		if len(options) == 0 {
-			return fmt.Errorf("no tags options found for %s", field.Name)
-		}
-		// the first one is the json tag
-		key := options[0]
-		if _, okay := totalMap.Value(key); okay {
-			delete(totalMap, key)
-		}
-
-	}
-	i = (*IssueFields)(aux.Alias)
-	// all the tags found in the struct were removed. Whatever is left are unknowns to struct
-	i.Unknowns = totalMap
 	return nil
-
 }
+
+// ignore if there are no tags
+
+// the first one is the json tag
+
+// all the tags found in the struct were removed. Whatever is left are unknowns to struct
 
 // IssueRenderedFields represents rendered fields of a Jira issue.
 // Not all IssueFields are rendered.
@@ -288,9 +236,7 @@ type Parent struct {
 // Time represents the Time definition of Jira as a time.Time of go
 type Time time.Time
 
-func (t Time) Equal(u Time) bool {
-	return time.Time(t).Equal(time.Time(u))
-}
+func (t Time) Equal(u Time) bool { _ = "STUB: not implemented"; return false }
 
 // Date represents the Date definition of Jira as a time.Time of go
 type Date time.Time
@@ -354,46 +300,27 @@ type Option struct {
 // UnmarshalJSON will transform the Jira time into a time.Time
 // during the transformation of the Jira JSON response
 func (t *Time) UnmarshalJSON(b []byte) error {
+	_ = "STUB: not implemented"
 	// Ignore null, like in the main JSON package.
-	if string(b) == "null" {
-		return nil
-	}
-	ti, err := time.Parse("\"2006-01-02T15:04:05.999-0700\"", string(b))
-	if err != nil {
-		return err
-	}
-	*t = Time(ti)
 	return nil
 }
 
 // MarshalJSON will transform the time.Time into a Jira time
 // during the creation of a Jira request
-func (t Time) MarshalJSON() ([]byte, error) {
-	return []byte(time.Time(t).Format("\"2006-01-02T15:04:05.000-0700\"")), nil
-}
+func (t Time) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // UnmarshalJSON will transform the Jira date into a time.Time
 // during the transformation of the Jira JSON response
 func (t *Date) UnmarshalJSON(b []byte) error {
+	_ = "STUB: not implemented"
 	// Ignore null, like in the main JSON package.
-	if string(b) == "null" {
-		return nil
-	}
-	ti, err := time.Parse("\"2006-01-02\"", string(b))
-	if err != nil {
-		return err
-	}
-	*t = Date(ti)
 	return nil
 }
 
 // MarshalJSON will transform the Date object into a short
 // date string as Jira expects during the creation of a
 // Jira request
-func (t Date) MarshalJSON() ([]byte, error) {
-	time := time.Time(t)
-	return []byte(time.Format("\"2006-01-02\"")), nil
-}
+func (t Date) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Worklog represents the work log of a Jira issue.
 // One Worklog contains zero or n WorklogRecords
@@ -620,28 +547,8 @@ type RemoteLinkStatus struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) Get(ctx context.Context, issueID string, options *GetQueryOptions) (*Issue, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s", issueID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if options != nil {
-		q, err := query.Values(options)
-		if err != nil {
-			return nil, nil, err
-		}
-		req.URL.RawQuery = q.Encode()
-	}
-
-	issue := new(Issue)
-	resp, err := s.client.Do(req, issue)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return issue, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // DownloadAttachment returns a Response of an attachment for a given attachmentID.
@@ -652,19 +559,8 @@ func (s *IssueService) Get(ctx context.Context, issueID string, options *GetQuer
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DownloadAttachment(ctx context.Context, attachmentID string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("secure/attachment/%s/", attachmentID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // PostAttachment uploads r (io.Reader) as an attachment to a given issueID
@@ -672,41 +568,13 @@ func (s *IssueService) DownloadAttachment(ctx context.Context, attachmentID stri
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) PostAttachment(ctx context.Context, issueID string, r io.Reader, attachmentName string) (*[]Attachment, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/attachments", issueID)
-
-	b := new(bytes.Buffer)
-	writer := multipart.NewWriter(b)
-
-	fw, err := writer.CreateFormFile("file", attachmentName)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if r != nil {
-		// Copy the file
-		if _, err = io.Copy(fw, r); err != nil {
-			return nil, nil, err
-		}
-	}
-	writer.Close()
-
-	req, err := s.client.NewMultiPartRequest(ctx, http.MethodPost, apiEndpoint, b)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	// PostAttachment response returns a JSON array (as multiple attachments can be posted)
-	attachment := new([]Attachment)
-	resp, err := s.client.Do(req, attachment)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return attachment, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// Copy the file
+
+// PostAttachment response returns a JSON array (as multiple attachments can be posted)
 
 // DeleteAttachment deletes an attachment of a given attachmentID
 // Caller must close resp.Body
@@ -714,20 +582,8 @@ func (s *IssueService) PostAttachment(ctx context.Context, issueID string, r io.
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DeleteAttachment(ctx context.Context, attachmentID string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/attachment/%s", attachmentID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DeleteLink deletes a link of a given linkID
@@ -736,20 +592,8 @@ func (s *IssueService) DeleteAttachment(ctx context.Context, attachmentID string
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DeleteLink(ctx context.Context, linkID string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issueLink/%s", linkID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetWorklogs gets all the worklogs for an issue.
@@ -760,23 +604,8 @@ func (s *IssueService) DeleteLink(ctx context.Context, linkID string) (*Response
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetWorklogs(ctx context.Context, issueID string, options ...func(*http.Request) error) (*Worklog, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/worklog", issueID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	for _, option := range options {
-		err = option(req)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	v := new(Worklog)
-	resp, err := s.client.Do(req, v)
-	return v, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Applies query options to http request.
@@ -785,17 +614,8 @@ func (s *IssueService) GetWorklogs(ctx context.Context, issueID string, options 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func WithQueryOptions(options interface{}) func(*http.Request) error {
-	q, err := query.Values(options)
-	if err != nil {
-		return func(*http.Request) error {
-			return err
-		}
-	}
-
-	return func(r *http.Request) error {
-		r.URL.RawQuery = q.Encode()
-		return nil
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Create creates an issue or a sub-task from a JSON representation.
@@ -807,27 +627,11 @@ func WithQueryOptions(options interface{}) func(*http.Request) error {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) Create(ctx context.Context, issue *Issue) (*Issue, *Response, error) {
-	apiEndpoint := "rest/api/2/issue"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, issue)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		// incase of error return the resp for further inspection
-		return nil, resp, err
-	}
-	defer resp.Body.Close()
-
-	responseIssue := new(Issue)
-	err = json.NewDecoder(resp.Body).Decode(&responseIssue)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return responseIssue, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// incase of error return the resp for further inspection
 
 // Update updates an issue from a JSON representation,
 // while also specifying query params. The issue is found by key.
@@ -838,26 +642,12 @@ func (s *IssueService) Create(ctx context.Context, issue *Issue) (*Issue, *Respo
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) Update(ctx context.Context, issue *Issue, opts *UpdateQueryOptions) (*Issue, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%v", issue.Key)
-	url, err := addOptions(apiEndpoint, opts)
-	if err != nil {
-		return nil, nil, err
-	}
-	req, err := s.client.NewRequest(ctx, http.MethodPut, url, issue)
-	if err != nil {
-		return nil, nil, err
-	}
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	// This is just to follow the rest of the API's convention of returning an issue.
-	// Returning the same pointer here is pointless, so we return a copy instead.
-	ret := *issue
-	return &ret, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// This is just to follow the rest of the API's convention of returning an issue.
+// Returning the same pointer here is pointless, so we return a copy instead.
 
 // UpdateIssue updates an issue from a JSON representation. The issue is found by key.
 //
@@ -867,20 +657,12 @@ func (s *IssueService) Update(ctx context.Context, issue *Issue, opts *UpdateQue
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) UpdateIssue(ctx context.Context, jiraID string, data map[string]interface{}) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%v", jiraID)
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndpoint, data)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-
-	// This is just to follow the rest of the API's convention of returning an issue.
-	// Returning the same pointer here is pointless, so we return a copy instead.
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// This is just to follow the rest of the API's convention of returning an issue.
+// Returning the same pointer here is pointless, so we return a copy instead.
 
 // AddComment adds a new comment to issueID.
 //
@@ -889,20 +671,8 @@ func (s *IssueService) UpdateIssue(ctx context.Context, jiraID string, data map[
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) AddComment(ctx context.Context, issueID string, comment *Comment) (*Comment, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/comment", issueID)
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, comment)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseComment := new(Comment)
-	resp, err := s.client.Do(req, responseComment)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseComment, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // UpdateComment updates the body of a comment, identified by comment.ID, on the issueID.
@@ -912,24 +682,8 @@ func (s *IssueService) AddComment(ctx context.Context, issueID string, comment *
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) UpdateComment(ctx context.Context, issueID string, comment *Comment) (*Comment, *Response, error) {
-	reqBody := struct {
-		Body string `json:"body"`
-	}{
-		Body: comment.Body,
-	}
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/comment/%s", issueID, comment.ID)
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndpoint, reqBody)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseComment := new(Comment)
-	resp, err := s.client.Do(req, responseComment)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return responseComment, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // DeleteComment Deletes a comment from an issueID.
@@ -939,19 +693,7 @@ func (s *IssueService) UpdateComment(ctx context.Context, issueID string, commen
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DeleteComment(ctx context.Context, issueID, commentID string) error {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/comment/%s", issueID, commentID)
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return jerr
-	}
-	defer resp.Body.Close()
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -962,27 +704,8 @@ func (s *IssueService) DeleteComment(ctx context.Context, issueID, commentID str
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) AddWorklogRecord(ctx context.Context, issueID string, record *WorklogRecord, options ...func(*http.Request) error) (*WorklogRecord, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/worklog", issueID)
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, record)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	for _, option := range options {
-		err = option(req)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	responseRecord := new(WorklogRecord)
-	resp, err := s.client.Do(req, responseRecord)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseRecord, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // UpdateWorklogRecord updates a worklog record.
@@ -992,27 +715,8 @@ func (s *IssueService) AddWorklogRecord(ctx context.Context, issueID string, rec
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) UpdateWorklogRecord(ctx context.Context, issueID, worklogID string, record *WorklogRecord, options ...func(*http.Request) error) (*WorklogRecord, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/worklog/%s", issueID, worklogID)
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndpoint, record)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	for _, option := range options {
-		err = option(req)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	responseRecord := new(WorklogRecord)
-	resp, err := s.client.Do(req, responseRecord)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseRecord, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // AddLink adds a link between two issues.
@@ -1023,18 +727,8 @@ func (s *IssueService) UpdateWorklogRecord(ctx context.Context, issueID, worklog
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) AddLink(ctx context.Context, issueLink *IssueLink) (*Response, error) {
-	apiEndpoint := "rest/api/2/issueLink"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, issueLink)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Search will search for tickets according to the jql
@@ -1044,45 +738,8 @@ func (s *IssueService) AddLink(ctx context.Context, issueLink *IssueLink) (*Resp
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) Search(ctx context.Context, jql string, options *SearchOptions) ([]Issue, *Response, error) {
-	u := url.URL{
-		Path: "rest/api/2/search",
-	}
-	uv := url.Values{}
-	if jql != "" {
-		uv.Add("jql", jql)
-	}
-
-	if options != nil {
-		if options.StartAt != 0 {
-			uv.Add("startAt", strconv.Itoa(options.StartAt))
-		}
-		if options.MaxResults != 0 {
-			uv.Add("maxResults", strconv.Itoa(options.MaxResults))
-		}
-		if options.Expand != "" {
-			uv.Add("expand", options.Expand)
-		}
-		if strings.Join(options.Fields, ",") != "" {
-			uv.Add("fields", strings.Join(options.Fields, ","))
-		}
-		if options.ValidateQuery != "" {
-			uv.Add("validateQuery", options.ValidateQuery)
-		}
-	}
-
-	u.RawQuery = uv.Encode()
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, u.String(), nil)
-	if err != nil {
-		return []Issue{}, nil, err
-	}
-
-	v := new(searchResult)
-	resp, err := s.client.Do(req, v)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-	return v.Issues, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // SearchPages will get issues from all pages in a search
@@ -1092,44 +749,8 @@ func (s *IssueService) Search(ctx context.Context, jql string, options *SearchOp
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) SearchPages(ctx context.Context, jql string, options *SearchOptions, f func(Issue) error) error {
-	if options == nil {
-		options = &SearchOptions{
-			StartAt:    0,
-			MaxResults: 50,
-		}
-	}
-
-	if options.MaxResults == 0 {
-		options.MaxResults = 50
-	}
-
-	issues, resp, err := s.Search(ctx, jql, options)
-	if err != nil {
-		return err
-	}
-
-	if len(issues) == 0 {
-		return nil
-	}
-
-	for {
-		for _, issue := range issues {
-			err = f(issue)
-			if err != nil {
-				return err
-			}
-		}
-
-		if resp.StartAt+resp.MaxResults >= resp.Total {
-			return nil
-		}
-
-		options.StartAt += resp.MaxResults
-		issues, resp, err = s.Search(ctx, jql, options)
-		if err != nil {
-			return err
-		}
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // GetCustomFields returns a map of customfield_* keys with string values
@@ -1137,39 +758,8 @@ func (s *IssueService) SearchPages(ctx context.Context, jql string, options *Sea
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetCustomFields(ctx context.Context, issueID string) (CustomFields, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s", issueID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	issue := new(map[string]interface{})
-	resp, err := s.client.Do(req, issue)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	m := *issue
-	f := m["fields"]
-	cf := make(CustomFields)
-	if f == nil {
-		return cf, resp, nil
-	}
-
-	if rec, ok := f.(map[string]interface{}); ok {
-		for key, val := range rec {
-			if strings.Contains(key, "customfield") {
-				if valMap, ok := val.(map[string]interface{}); ok {
-					if v, ok := valMap["value"]; ok {
-						val = v
-					}
-				}
-				cf[key] = fmt.Sprint(val)
-			}
-		}
-	}
-	return cf, resp, nil
+	_ = "STUB: not implemented"
+	return *new(CustomFields), nil, nil
 }
 
 // GetTransitions gets a list of the transitions possible for this issue by the current user,
@@ -1180,18 +770,8 @@ func (s *IssueService) GetCustomFields(ctx context.Context, issueID string) (Cus
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetTransitions(ctx context.Context, id string) ([]Transition, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/transitions?expand=transitions.fields", id)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	result := new(transitionResult)
-	resp, err := s.client.Do(req, result)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-	return result.Transitions, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // DoTransition performs a transition on an issue.
@@ -1203,12 +783,8 @@ func (s *IssueService) GetTransitions(ctx context.Context, id string) ([]Transit
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DoTransition(ctx context.Context, ticketID, transitionID string) (*Response, error) {
-	payload := CreateTransitionPayload{
-		Transition: TransitionPayload{
-			ID: transitionID,
-		},
-	}
-	return s.DoTransitionWithPayload(ctx, ticketID, payload)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DoTransitionWithPayload performs a transition on an issue using any payload.
@@ -1220,19 +796,8 @@ func (s *IssueService) DoTransition(ctx context.Context, ticketID, transitionID 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) DoTransitionWithPayload(ctx context.Context, ticketID, payload interface{}) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/transitions", ticketID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // InitIssueWithMetaAndFields returns Issue with with values from fieldsConfig properly set.
@@ -1251,73 +816,13 @@ func (s *IssueService) DoTransitionWithPayload(ctx context.Context, ticketID, pa
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func InitIssueWithMetaAndFields(metaProject *MetaProject, metaIssuetype *MetaIssueType, fieldsConfig map[string]string) (*Issue, error) {
-	issue := new(Issue)
-	issueFields := new(IssueFields)
-	issueFields.Unknowns = tcontainer.NewMarshalMap()
-
-	// map the field names the User presented to jira's internal key
-	allFields, _ := metaIssuetype.GetAllFields()
-	for key, value := range fieldsConfig {
-		jiraKey, found := allFields[key]
-		if !found {
-			return nil, fmt.Errorf("key %s is not found in the list of fields", key)
-		}
-
-		valueType, err := metaIssuetype.Fields.String(jiraKey + "/schema/type")
-		if err != nil {
-			return nil, err
-		}
-		switch valueType {
-		case "array":
-			elemType, err := metaIssuetype.Fields.String(jiraKey + "/schema/items")
-			if err != nil {
-				return nil, err
-			}
-			switch elemType {
-			case "component":
-				issueFields.Unknowns[jiraKey] = []Component{{Name: value}}
-			case "option":
-				issueFields.Unknowns[jiraKey] = []map[string]string{{"value": value}}
-			default:
-				issueFields.Unknowns[jiraKey] = []string{value}
-			}
-		case "string":
-			issueFields.Unknowns[jiraKey] = value
-		case "date":
-			issueFields.Unknowns[jiraKey] = value
-		case "datetime":
-			issueFields.Unknowns[jiraKey] = value
-		case "any":
-			// Treat any as string
-			issueFields.Unknowns[jiraKey] = value
-		case "project":
-			issueFields.Unknowns[jiraKey] = Project{
-				Name: metaProject.Name,
-				ID:   metaProject.Id,
-			}
-		case "priority":
-			issueFields.Unknowns[jiraKey] = Priority{Name: value}
-		case "user":
-			issueFields.Unknowns[jiraKey] = User{
-				Name: value,
-			}
-		case "issuetype":
-			issueFields.Unknowns[jiraKey] = IssueType{
-				Name: value,
-			}
-		case "option":
-			issueFields.Unknowns[jiraKey] = Option{
-				Value: value,
-			}
-		default:
-			return nil, fmt.Errorf("unknown issue type encountered: %s for %s", valueType, key)
-		}
-	}
-
-	issue.Fields = issueFields
-
-	return issue, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// map the field names the User presented to jira's internal key
+
+// Treat any as string
 
 // Delete will delete a specified issue.
 // Caller must close resp.Body
@@ -1325,21 +830,11 @@ func InitIssueWithMetaAndFields(metaProject *MetaProject, metaIssuetype *MetaIss
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) Delete(ctx context.Context, issueID string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s", issueID)
-
-	// to enable deletion of subtasks; without this, the request will fail if the issue has subtasks
-	deletePayload := make(map[string]interface{})
-	deletePayload["deleteSubtasks"] = "true"
-	content, _ := json.Marshal(deletePayload)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, content)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// to enable deletion of subtasks; without this, the request will fail if the issue has subtasks
 
 // GetWatchers wil return all the users watching/observing the given issue
 //
@@ -1348,32 +843,8 @@ func (s *IssueService) Delete(ctx context.Context, issueID string) (*Response, e
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetWatchers(ctx context.Context, issueID string) (*[]User, *Response, error) {
-	watchesAPIEndpoint := fmt.Sprintf("rest/api/2/issue/%s/watchers", issueID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, watchesAPIEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	watches := new(Watches)
-	resp, err := s.client.Do(req, watches)
-	if err != nil {
-		return nil, nil, NewJiraError(resp, err)
-	}
-
-	result := []User{}
-	for _, watcher := range watches.Watchers {
-		var user *User
-		if watcher.AccountID != "" {
-			user, resp, err = s.client.User.GetByAccountID(context.Background(), watcher.AccountID)
-			if err != nil {
-				return nil, resp, NewJiraError(resp, err)
-			}
-		}
-		result = append(result, *user)
-	}
-
-	return &result, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // AddWatcher adds watcher to the given issue
@@ -1384,19 +855,8 @@ func (s *IssueService) GetWatchers(ctx context.Context, issueID string) (*[]User
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) AddWatcher(ctx context.Context, issueID string, userName string) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/api/2/issue/%s/watchers", issueID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndPoint, userName)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // RemoveWatcher removes given user from given issue
@@ -1407,19 +867,8 @@ func (s *IssueService) AddWatcher(ctx context.Context, issueID string, userName 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) RemoveWatcher(ctx context.Context, issueID string, userName string) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/api/2/issue/%s/watchers", issueID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndPoint, userName)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // UpdateAssignee updates the user assigned to work on the given issue
@@ -1430,31 +879,17 @@ func (s *IssueService) RemoveWatcher(ctx context.Context, issueID string, userNa
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) UpdateAssignee(ctx context.Context, issueID string, assignee *User) (*Response, error) {
-	apiEndPoint := fmt.Sprintf("rest/api/2/issue/%s/assignee", issueID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndPoint, assignee)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return resp, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (c ChangelogHistory) CreatedTime() (time.Time, error) {
-	var t time.Time
+	_ = "STUB: not implemented"
+
 	// Ignore null
-	if string(c.Created) == "null" {
-		return t, nil
-	}
-	t, err := time.Parse("2006-01-02T15:04:05.999-0700", c.Created)
-	return t, err
+	return *new(time.Time), nil
 }
 
 // GetRemoteLinks gets remote issue links on the issue.
@@ -1464,18 +899,8 @@ func (c ChangelogHistory) CreatedTime() (time.Time, error) {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetRemoteLinks(ctx context.Context, id string) (*[]RemoteLink, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/remotelink", id)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	result := new([]RemoteLink)
-	resp, err := s.client.Do(req, result)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-	return result, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // AddRemoteLink adds a remote link to issueID.
@@ -1485,20 +910,8 @@ func (s *IssueService) GetRemoteLinks(ctx context.Context, id string) (*[]Remote
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) AddRemoteLink(ctx context.Context, issueID string, remotelink *RemoteLink) (*RemoteLink, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/remotelink", issueID)
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, remotelink)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseRemotelink := new(RemoteLink)
-	resp, err := s.client.Do(req, responseRemotelink)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseRemotelink, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // UpdateRemoteLink updates a remote issue link by linkID.
@@ -1509,17 +922,6 @@ func (s *IssueService) AddRemoteLink(ctx context.Context, issueID string, remote
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) UpdateRemoteLink(ctx context.Context, issueID string, linkID int, remotelink *RemoteLink) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/issue/%s/remotelink/%d", issueID, linkID)
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndpoint, remotelink)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

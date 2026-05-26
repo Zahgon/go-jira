@@ -2,7 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"net/http"
 )
 
 // StatusService handles staties for the Jira instance / API.
@@ -29,18 +28,6 @@ type Status struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *StatusService) GetAllStatuses(ctx context.Context) ([]Status, *Response, error) {
-	apiEndpoint := "rest/api/2/status"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	statusList := []Status{}
-	resp, err := s.client.Do(req, &statusList)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return statusList, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

@@ -2,8 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 )
 
 // PermissionSchemeService handles permissionschemes for the Jira instance / API.
@@ -35,20 +33,8 @@ type Holder struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *PermissionSchemeService) GetList(ctx context.Context) (*PermissionSchemes, *Response, error) {
-	apiEndpoint := "/rest/api/3/permissionscheme"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	pss := new(PermissionSchemes)
-	resp, err := s.client.Do(req, &pss)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return pss, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Get returns a full representation of the permission scheme for the schemeID
@@ -58,21 +44,6 @@ func (s *PermissionSchemeService) GetList(ctx context.Context) (*PermissionSchem
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *PermissionSchemeService) Get(ctx context.Context, schemeID int) (*PermissionScheme, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/3/permissionscheme/%d", schemeID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ps := new(PermissionScheme)
-	resp, err := s.client.Do(req, ps)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-	if ps.Self == "" {
-		return nil, resp, fmt.Errorf("no permissionscheme with ID %d found", schemeID)
-	}
-
-	return ps, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

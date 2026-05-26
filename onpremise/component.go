@@ -2,7 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"net/http"
 )
 
 // ComponentService handles components for the Jira instance / API.//
@@ -26,18 +25,6 @@ type CreateComponentOptions struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *ComponentService) Create(ctx context.Context, options *CreateComponentOptions) (*ProjectComponent, *Response, error) {
-	apiEndpoint := "rest/api/2/component"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, options)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	component := new(ProjectComponent)
-	resp, err := s.client.Do(req, component)
-
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return component, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

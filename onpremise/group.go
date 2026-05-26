@@ -2,9 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
 )
 
 // GroupService handles Groups for the Jira instance / API.
@@ -69,31 +66,11 @@ type GroupSearchOptions struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *GroupService) Get(ctx context.Context, name string, options *GroupSearchOptions) ([]GroupMember, *Response, error) {
-	var apiEndpoint string
-	if options == nil {
-		apiEndpoint = fmt.Sprintf("/rest/api/2/group/member?groupname=%s", url.QueryEscape(name))
-	} else {
-		// TODO use addOptions
-		apiEndpoint = fmt.Sprintf(
-			"/rest/api/2/group/member?groupname=%s&startAt=%d&maxResults=%d&includeInactiveUsers=%t",
-			url.QueryEscape(name),
-			options.StartAt,
-			options.MaxResults,
-			options.IncludeInactiveUsers,
-		)
-	}
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	group := new(groupMembersResult)
-	resp, err := s.client.Do(req, group)
-	if err != nil {
-		return nil, resp, err
-	}
-	return group.Members, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// TODO use addOptions
 
 // Add adds user to group
 //
@@ -102,24 +79,8 @@ func (s *GroupService) Get(ctx context.Context, name string, options *GroupSearc
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *GroupService) Add(ctx context.Context, groupname string, username string) (*Group, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/group/user?groupname=%s", groupname)
-	var user struct {
-		Name string `json:"name"`
-	}
-	user.Name = username
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, &user)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseGroup := new(Group)
-	resp, err := s.client.Do(req, responseGroup)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseGroup, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Remove removes user from group
@@ -130,17 +91,6 @@ func (s *GroupService) Add(ctx context.Context, groupname string, username strin
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *GroupService) Remove(ctx context.Context, groupname string, username string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/group/user?groupname=%s&username=%s", groupname, username)
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return resp, jerr
-	}
-
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

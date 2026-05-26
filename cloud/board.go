@@ -2,8 +2,6 @@ package cloud
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -146,24 +144,8 @@ type BoardConfigurationColumnStatus struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *BoardService) GetAllBoards(ctx context.Context, opt *BoardListOptions) (*BoardsList, *Response, error) {
-	apiEndpoint := "rest/agile/1.0/board"
-	url, err := addOptions(apiEndpoint, opt)
-	if err != nil {
-		return nil, nil, err
-	}
-	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	boards := new(BoardsList)
-	resp, err := s.client.Do(req, boards)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return boards, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetBoard returns the board for the given board ID.
@@ -172,20 +154,8 @@ func (s *BoardService) GetAllBoards(ctx context.Context, opt *BoardListOptions) 
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-get
 func (s *BoardService) GetBoard(ctx context.Context, boardID int64) (*Board, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%v", boardID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	board := new(Board)
-	resp, err := s.client.Do(req, board)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return board, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // CreateBoard creates a new board. Board name, type and filter Id is required.
@@ -200,20 +170,8 @@ func (s *BoardService) GetBoard(ctx context.Context, boardID int64) (*Board, *Re
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *BoardService) CreateBoard(ctx context.Context, board *Board) (*Board, *Response, error) {
-	apiEndpoint := "rest/agile/1.0/board"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, board)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseBoard := new(Board)
-	resp, err := s.client.Do(req, responseBoard)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return responseBoard, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // DeleteBoard will delete an agile board.
@@ -224,17 +182,8 @@ func (s *BoardService) CreateBoard(ctx context.Context, board *Board) (*Board, *
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *BoardService) DeleteBoard(ctx context.Context, boardID int) (*Board, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%v", boardID)
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-	return nil, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetAllSprints returns all sprints from a board, for a given board ID.
@@ -242,23 +191,8 @@ func (s *BoardService) DeleteBoard(ctx context.Context, boardID int) (*Board, *R
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-sprint-get
 func (s *BoardService) GetAllSprints(ctx context.Context, boardID int64, options *GetAllSprintsOptions) (*SprintsList, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d/sprint", boardID)
-	url, err := addOptions(apiEndpoint, options)
-	if err != nil {
-		return nil, nil, err
-	}
-	req, err := s.client.NewRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	result := new(SprintsList)
-	resp, err := s.client.Do(req, result)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return result, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetBoardConfiguration will return a board configuration for a given board Id
@@ -267,20 +201,6 @@ func (s *BoardService) GetAllSprints(ctx context.Context, boardID int64, options
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *BoardService) GetBoardConfiguration(ctx context.Context, boardID int) (*BoardConfiguration, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d/configuration", boardID)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	result := new(BoardConfiguration)
-	resp, err := s.client.Do(req, result)
-	if err != nil {
-		err = NewJiraError(resp, err)
-	}
-
-	return result, resp, err
-
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

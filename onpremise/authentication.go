@@ -2,8 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -57,60 +55,20 @@ type Session struct {
 //
 // Deprecated: Use CookieAuthTransport instead
 func (s *AuthenticationService) AcquireSessionCookie(ctx context.Context, username, password string) (bool, error) {
-	apiEndpoint := "rest/auth/1/session"
-	body := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}{
-		username,
-		password,
-	}
-
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, body)
-	if err != nil {
-		return false, err
-	}
-
-	session := new(Session)
-	resp, err := s.client.Do(req, session)
-	if err != nil {
-		return false, fmt.Errorf("auth at Jira instance failed (HTTP(S) request). %w", err)
-	}
-
-	if resp != nil && resp.StatusCode != 200 {
-		return false, fmt.Errorf("auth at Jira instance failed (HTTP(S) request). Status code: %d", resp.StatusCode)
-	}
-	if resp != nil {
-		session.Cookies = resp.Cookies()
-	}
-
-	s.client.session = session
-	s.authType = authTypeSession
-
-	return true, nil
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
 // SetBasicAuth sets username and password for the basic auth against the Jira instance.
 //
 // Deprecated: Use BasicAuthTransport instead
 func (s *AuthenticationService) SetBasicAuth(username, password string) {
-	s.username = username
-	s.password = password
-	s.authType = authTypeBasic
+	_ = "STUB: not implemented"
+	return
 }
 
 // Authenticated reports if the current Client has authentication details for Jira
-func (s *AuthenticationService) Authenticated() bool {
-	if s != nil {
-		if s.authType == authTypeSession {
-			return s.client.session != nil
-		} else if s.authType == authTypeBasic {
-			return s.username != ""
-		}
-
-	}
-	return false
-}
+func (s *AuthenticationService) Authenticated() bool { _ = "STUB: not implemented"; return false }
 
 // Logout logs out the current user that has been authenticated and the session in the client is destroyed.
 //
@@ -119,63 +77,16 @@ func (s *AuthenticationService) Authenticated() bool {
 // Deprecated: Use CookieAuthTransport to create base client.  Logging out is as simple as not using the
 // client anymore
 func (s *AuthenticationService) Logout(ctx context.Context) error {
-	if s.authType != authTypeSession || s.client.session == nil {
-		return fmt.Errorf("no user is authenticated")
-	}
-
-	apiEndpoint := "rest/auth/1/session"
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return fmt.Errorf("creating the request to log the user out failed : %w", err)
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return fmt.Errorf("error sending the logout request: %w", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 204 {
-		return fmt.Errorf("the logout was unsuccessful with status %d", resp.StatusCode)
-	}
-
-	// If logout successful, delete session
-	s.client.session = nil
-
+	_ = "STUB: not implemented"
 	return nil
-
 }
+
+// If logout successful, delete session
 
 // GetCurrentUser gets the details of the current user.
 //
 // Jira API docs: https://docs.atlassian.com/jira/REST/latest/#auth/1/session
 func (s *AuthenticationService) GetCurrentUser(ctx context.Context) (*Session, error) {
-	if s == nil {
-		return nil, fmt.Errorf("authentication Service is not instantiated")
-	}
-	if s.authType != authTypeSession || s.client.session == nil {
-		return nil, fmt.Errorf("no user is authenticated yet")
-	}
-
-	apiEndpoint := "rest/auth/1/session"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, fmt.Errorf("could not create request for getting user info: %w", err)
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error sending request to get user info: %w", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("getting user info failed with status : %d", resp.StatusCode)
-	}
-
-	ret := new(Session)
-	err = json.NewDecoder(resp.Body).Decode(&ret)
-	if err != nil {
-		return nil, err
-	}
-
-	return ret, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

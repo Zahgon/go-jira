@@ -1,16 +1,8 @@
 package cloud
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
 	"net/http"
 	"net/url"
-	"sort"
-	"strings"
-	"time"
-
-	jwt "github.com/golang-jwt/jwt/v4"
 )
 
 // JWTAuthTransport is an http.RoundTripper that authenticates all requests
@@ -32,56 +24,27 @@ type JWTAuthTransport struct {
 	Transport http.RoundTripper
 }
 
-func (t *JWTAuthTransport) Client() *http.Client {
-	return &http.Client{Transport: t}
-}
+func (t *JWTAuthTransport) Client() *http.Client { _ = "STUB: not implemented"; return nil }
 
 func (t *JWTAuthTransport) transport() http.RoundTripper {
-	if t.Transport != nil {
-		return t.Transport
-	}
-	return http.DefaultTransport
+	_ = "STUB: not implemented"
+	return *new(http.RoundTripper)
 }
 
 // RoundTrip adds the session object to the request.
 func (t *JWTAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req2 := cloneRequest(req) // per RoundTripper contract
-	exp := time.Duration(59) * time.Second
-	qsh := t.createQueryStringHash(req.Method, req2.URL)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss": t.Issuer,
-		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(exp).Unix(),
-		"qsh": qsh,
-	})
-
-	jwtStr, err := token.SignedString(t.Secret)
-	if err != nil {
-		return nil, fmt.Errorf("jwtAuth: error signing JWT: %w", err)
-	}
-
-	req2.Header.Set("Authorization", fmt.Sprintf("JWT %s", jwtStr))
-	return t.transport().RoundTrip(req2)
+	_ = "STUB: not implemented"
+	return nil,
+		// per RoundTripper contract
+		nil
 }
 
 func (t *JWTAuthTransport) createQueryStringHash(httpMethod string, jiraURL *url.URL) string {
-	canonicalRequest := t.canonicalizeRequest(httpMethod, jiraURL)
-	h := sha256.Sum256([]byte(canonicalRequest))
-	return hex.EncodeToString(h[:])
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (t *JWTAuthTransport) canonicalizeRequest(httpMethod string, jiraURL *url.URL) string {
-	path := "/" + strings.Replace(strings.Trim(jiraURL.Path, "/"), "&", "%26", -1)
-
-	var canonicalQueryString []string
-	for k, v := range jiraURL.Query() {
-		if k == "jwt" {
-			continue
-		}
-		param := url.QueryEscape(k)
-		value := url.QueryEscape(strings.Join(v, ""))
-		canonicalQueryString = append(canonicalQueryString, strings.Replace(strings.Join([]string{param, value}, "="), "+", "%20", -1))
-	}
-	sort.Strings(canonicalQueryString)
-	return fmt.Sprintf("%s&%s&%s", strings.ToUpper(httpMethod), path, strings.Join(canonicalQueryString, "&"))
+	_ = "STUB: not implemented"
+	return ""
 }

@@ -2,9 +2,6 @@ package cloud
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 )
 
 // UserService handles users for the Jira instance / API.
@@ -83,18 +80,8 @@ type UserSearchF func(UserSearch) UserSearch
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) Get(ctx context.Context, accountId string) (*User, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/user?accountId=%s", accountId)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	user := new(User)
-	resp, err := s.client.Do(req, user)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return user, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetByAccountID gets user info from Jira
@@ -105,18 +92,8 @@ func (s *UserService) Get(ctx context.Context, accountId string) (*User, *Respon
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) GetByAccountID(ctx context.Context, accountID string) (*User, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/user?accountId=%s", accountID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	user := new(User)
-	resp, err := s.client.Do(req, user)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return user, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Create creates an user in Jira.
@@ -126,25 +103,8 @@ func (s *UserService) GetByAccountID(ctx context.Context, accountID string) (*Us
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) Create(ctx context.Context, user *User) (*User, *Response, error) {
-	apiEndpoint := "/rest/api/2/user"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, user)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return nil, resp, err
-	}
-	defer resp.Body.Close()
-
-	responseUser := new(User)
-	err = json.NewDecoder(resp.Body).Decode(&responseUser)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return responseUser, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Delete deletes an user from Jira.
@@ -156,17 +116,8 @@ func (s *UserService) Create(ctx context.Context, user *User) (*User, *Response,
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) Delete(ctx context.Context, accountId string) (*Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/user?accountId=%s", accountId)
-	req, err := s.client.NewRequest(ctx, http.MethodDelete, apiEndpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return resp, NewJiraError(resp, err)
-	}
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetGroups returns the groups which the user belongs to
@@ -176,94 +127,44 @@ func (s *UserService) Delete(ctx context.Context, accountId string) (*Response, 
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) GetGroups(ctx context.Context, accountId string) (*[]UserGroup, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/user/groups?accountId=%s", accountId)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	userGroups := new([]UserGroup)
-	resp, err := s.client.Do(req, userGroups)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return userGroups, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetCurrentUser returns details for the current user.
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-myself/#api-rest-api-3-myself-get
 func (s *UserService) GetCurrentUser(ctx context.Context) (*User, *Response, error) {
-	const apiEndpoint = "rest/api/3/myself"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var user User
-	resp, err := s.client.Do(req, &user)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return &user, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // WithMaxResults sets the max results to return
 func WithMaxResults(maxResults int) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "maxResults", value: fmt.Sprintf("%d", maxResults)})
-		return s
-	}
+	_ = "STUB: not implemented"
+	return *new(UserSearchF)
 }
 
 // WithStartAt set the start pager
-func WithStartAt(startAt int) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "startAt", value: fmt.Sprintf("%d", startAt)})
-		return s
-	}
-}
+func WithStartAt(startAt int) UserSearchF { _ = "STUB: not implemented"; return *new(UserSearchF) }
 
 // WithActive sets the active users lookup
-func WithActive(active bool) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "includeActive", value: fmt.Sprintf("%t", active)})
-		return s
-	}
-}
+func WithActive(active bool) UserSearchF { _ = "STUB: not implemented"; return *new(UserSearchF) }
 
 // WithInactive sets the inactive users lookup
-func WithInactive(inactive bool) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "includeInactive", value: fmt.Sprintf("%t", inactive)})
-		return s
-	}
-}
+func WithInactive(inactive bool) UserSearchF { _ = "STUB: not implemented"; return *new(UserSearchF) }
 
 // WithUsername sets the username to search
-func WithUsername(username string) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "username", value: username})
-		return s
-	}
-}
+func WithUsername(username string) UserSearchF { _ = "STUB: not implemented"; return *new(UserSearchF) }
 
 // WithAccountId sets the account id to search
 func WithAccountId(accountId string) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "accountId", value: accountId})
-		return s
-	}
+	_ = "STUB: not implemented"
+	return *new(UserSearchF)
 }
 
 // WithProperty sets the property (Property keys are specified by path) to search
-func WithProperty(property string) UserSearchF {
-	return func(s UserSearch) UserSearch {
-		s = append(s, UserSearchParam{name: "property", value: property})
-		return s
-	}
-}
+func WithProperty(property string) UserSearchF { _ = "STUB: not implemented"; return *new(UserSearchF) }
 
 // Find searches for user info from Jira:
 // It can find users by email or display name using the query parameter
@@ -273,31 +174,6 @@ func WithProperty(property string) UserSearchF {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *UserService) Find(ctx context.Context, property string, tweaks ...UserSearchF) ([]User, *Response, error) {
-	search := []UserSearchParam{
-		{
-			name:  "query",
-			value: property,
-		},
-	}
-	for _, f := range tweaks {
-		search = f(search)
-	}
-
-	var queryString = ""
-	for _, param := range search {
-		queryString += param.name + "=" + param.value + "&"
-	}
-
-	apiEndpoint := fmt.Sprintf("/rest/api/2/user/search?%s", queryString[:len(queryString)-1])
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	users := []User{}
-	resp, err := s.client.Do(req, &users)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return users, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

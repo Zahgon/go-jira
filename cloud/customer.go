@@ -2,7 +2,6 @@ package cloud
 
 import (
 	"context"
-	"net/http"
 )
 
 // CustomerService handles ServiceDesk customers for the Jira instance / API.
@@ -43,26 +42,6 @@ type CustomerList struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (c *CustomerService) Create(ctx context.Context, email, displayName string) (*Customer, *Response, error) {
-	const apiEndpoint = "rest/servicedeskapi/customer"
-
-	payload := struct {
-		Email       string `json:"email"`
-		DisplayName string `json:"displayName"`
-	}{
-		Email:       email,
-		DisplayName: displayName,
-	}
-
-	req, err := c.client.NewRequest(ctx, http.MethodPost, apiEndpoint, payload)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	responseCustomer := new(Customer)
-	resp, err := c.client.Do(req, responseCustomer)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return responseCustomer, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

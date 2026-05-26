@@ -2,7 +2,6 @@ package cloud
 
 import (
 	"context"
-	"net/http"
 )
 
 // PriorityService handles priorities for the Jira instance / API.
@@ -28,16 +27,6 @@ type Priority struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *PriorityService) GetList(ctx context.Context) ([]Priority, *Response, error) {
-	apiEndpoint := "rest/api/2/priority"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	priorityList := []Priority{}
-	resp, err := s.client.Do(req, &priorityList)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return priorityList, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

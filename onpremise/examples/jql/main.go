@@ -33,11 +33,4 @@ func main() {
 	outputResponse(issues, resp)
 }
 
-func outputResponse(issues []jira.Issue, resp *jira.Response) {
-	fmt.Printf("Call to %s\n", resp.Request.URL)
-	fmt.Printf("Response Code: %d\n", resp.StatusCode)
-	fmt.Println("==================================")
-	for _, i := range issues {
-		fmt.Printf("%s (%s/%s): %+v\n", i.Key, i.Fields.Type.Name, i.Fields.Priority.Name, i.Fields.Summary)
-	}
-}
+func outputResponse(issues []jira.Issue, resp *jira.Response) { _ = "STUB: not implemented"; return }

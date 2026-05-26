@@ -2,11 +2,7 @@ package onpremise
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"strings"
 
-	"github.com/google/go-querystring/query"
 	"github.com/trivago/tgo/tcontainer"
 )
 
@@ -54,28 +50,8 @@ type MetaIssueType struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetCreateMeta(ctx context.Context, options *GetQueryOptions) (*CreateMetaInfo, *Response, error) {
-	apiEndpoint := "rest/api/2/issue/createmeta"
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	if options != nil {
-		q, err := query.Values(options)
-		if err != nil {
-			return nil, nil, err
-		}
-		req.URL.RawQuery = q.Encode()
-	}
-
-	meta := new(CreateMetaInfo)
-	resp, err := s.client.Do(req, meta)
-
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return meta, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetEditMeta makes the api call to get the edit meta information for an issue
@@ -83,21 +59,8 @@ func (s *IssueService) GetCreateMeta(ctx context.Context, options *GetQueryOptio
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *IssueService) GetEditMeta(ctx context.Context, issue *Issue) (*EditMetaInfo, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/issue/%s/editmeta", issue.Key)
-
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	meta := new(EditMetaInfo)
-	resp, err := s.client.Do(req, meta)
-
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return meta, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetProjectWithName returns a project with "name" from the meta information received. If not found, this returns nil.
@@ -106,11 +69,7 @@ func (s *IssueService) GetEditMeta(ctx context.Context, issue *Issue) (*EditMeta
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (m *CreateMetaInfo) GetProjectWithName(name string) *MetaProject {
-	for _, m := range m.Projects {
-		if strings.EqualFold(m.Name, name) {
-			return m
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -120,11 +79,7 @@ func (m *CreateMetaInfo) GetProjectWithName(name string) *MetaProject {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (m *CreateMetaInfo) GetProjectWithKey(key string) *MetaProject {
-	for _, m := range m.Projects {
-		if strings.EqualFold(m.Key, key) {
-			return m
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -134,11 +89,7 @@ func (m *CreateMetaInfo) GetProjectWithKey(key string) *MetaProject {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (p *MetaProject) GetIssueTypeWithName(name string) *MetaIssueType {
-	for _, m := range p.IssueTypes {
-		if strings.EqualFold(m.Name, name) {
-			return m
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -165,21 +116,8 @@ func (p *MetaProject) GetIssueTypeWithName(name string) *MetaIssueType {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (t *MetaIssueType) GetMandatoryFields() (map[string]string, error) {
-	ret := make(map[string]string)
-	for key := range t.Fields {
-		required, err := t.Fields.Bool(key + "/required")
-		if err != nil {
-			return nil, err
-		}
-		if required {
-			name, err := t.Fields.String(key + "/name")
-			if err != nil {
-				return nil, err
-			}
-			ret[name] = key
-		}
-	}
-	return ret, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GetAllFields returns a map of all the fields for an IssueType. This includes all required and not required.
@@ -188,16 +126,8 @@ func (t *MetaIssueType) GetMandatoryFields() (map[string]string, error) {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (t *MetaIssueType) GetAllFields() (map[string]string, error) {
-	ret := make(map[string]string)
-	for key := range t.Fields {
-
-		name, err := t.Fields.String(key + "/name")
-		if err != nil {
-			return nil, err
-		}
-		ret[name] = key
-	}
-	return ret, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // CheckCompleteAndAvailable checks if the given fields satisfies the mandatory field required to create a issue for the given type
@@ -206,36 +136,10 @@ func (t *MetaIssueType) GetAllFields() (map[string]string, error) {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (t *MetaIssueType) CheckCompleteAndAvailable(config map[string]string) (bool, error) {
-	mandatory, err := t.GetMandatoryFields()
-	if err != nil {
-		return false, err
-	}
-	all, err := t.GetAllFields()
-	if err != nil {
-		return false, err
-	}
-
-	// check templateconfig against mandatory fields
-	for key := range mandatory {
-		if _, okay := config[key]; !okay {
-			var requiredFields []string
-			for name := range mandatory {
-				requiredFields = append(requiredFields, name)
-			}
-			return false, fmt.Errorf("required field not found in provided jira.fields. Required are: %#v", requiredFields)
-		}
-	}
-
-	// check templateConfig against all fields to verify they are available
-	for key := range config {
-		if _, okay := all[key]; !okay {
-			var availableFields []string
-			for name := range all {
-				availableFields = append(availableFields, name)
-			}
-			return false, fmt.Errorf("fields in jira.fields are not available in jira. Available are: %#v", availableFields)
-		}
-	}
-
-	return true, nil
+	_ = "STUB: not implemented"
+	return false, nil
 }
+
+// check templateconfig against mandatory fields
+
+// check templateConfig against all fields to verify they are available

@@ -2,10 +2,6 @@ package cloud
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-
-	"github.com/google/go-querystring/query"
 )
 
 // ProjectService handles projects for the Jira instance / API.
@@ -88,28 +84,8 @@ type PermissionScheme struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *ProjectService) GetAll(ctx context.Context, options *GetQueryOptions) (*ProjectList, *Response, error) {
-	apiEndpoint := "rest/api/2/project"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if options != nil {
-		q, err := query.Values(options)
-		if err != nil {
-			return nil, nil, err
-		}
-		req.URL.RawQuery = q.Encode()
-	}
-
-	projectList := new(ProjectList)
-	resp, err := s.client.Do(req, projectList)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return projectList, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Get returns a full representation of the project for the given issue key.
@@ -121,20 +97,8 @@ func (s *ProjectService) GetAll(ctx context.Context, options *GetQueryOptions) (
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *ProjectService) Get(ctx context.Context, projectID string) (*Project, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/project/%s", projectID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	project := new(Project)
-	resp, err := s.client.Do(req, project)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return project, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // GetPermissionScheme returns a full representation of the permission scheme for the project
@@ -146,18 +110,6 @@ func (s *ProjectService) Get(ctx context.Context, projectID string) (*Project, *
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *ProjectService) GetPermissionScheme(ctx context.Context, projectID string) (*PermissionScheme, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/project/%s/permissionscheme", projectID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ps := new(PermissionScheme)
-	resp, err := s.client.Do(req, ps)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	return ps, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

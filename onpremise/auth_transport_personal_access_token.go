@@ -17,9 +17,10 @@ type PATAuthTransport struct {
 // RoundTrip implements the RoundTripper interface.  We just add the
 // basic auth and return the RoundTripper for this transport type.
 func (t *PATAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req2 := cloneRequest(req) // per RoundTripper contract
-	req2.Header.Set("Authorization", "Bearer "+t.Token)
-	return t.transport().RoundTrip(req2)
+	_ = "STUB: not implemented"
+	return nil,
+		// per RoundTripper contract
+		nil
 }
 
 // Client returns an *http.Client that makes requests that are authenticated
@@ -27,13 +28,9 @@ func (t *PATAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 // so we can just get the client instead of creating the client in the calling code.
 // If it's necessary to send more information on client init, the calling code can
 // always skip this and set the transport itself.
-func (t *PATAuthTransport) Client() *http.Client {
-	return &http.Client{Transport: t}
-}
+func (t *PATAuthTransport) Client() *http.Client { _ = "STUB: not implemented"; return nil }
 
 func (t *PATAuthTransport) transport() http.RoundTripper {
-	if t.Transport != nil {
-		return t.Transport
-	}
-	return http.DefaultTransport
+	_ = "STUB: not implemented"
+	return *new(http.RoundTripper)
 }

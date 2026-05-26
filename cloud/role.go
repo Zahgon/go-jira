@@ -2,8 +2,6 @@ package cloud
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 )
 
 // RoleService handles roles for the Jira instance / API.
@@ -42,18 +40,8 @@ type ActorUser struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *RoleService) GetList(ctx context.Context) (*[]Role, *Response, error) {
-	apiEndpoint := "rest/api/3/role"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	roles := new([]Role)
-	resp, err := s.client.Do(req, roles)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-	return roles, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Get retreives a single Role from Jira
@@ -63,20 +51,6 @@ func (s *RoleService) GetList(ctx context.Context) (*[]Role, *Response, error) {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *RoleService) Get(ctx context.Context, roleID int) (*Role, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/3/role/%d", roleID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	role := new(Role)
-	resp, err := s.client.Do(req, role)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-	if role.Self == "" {
-		return nil, resp, fmt.Errorf("no role with ID %d found", roleID)
-	}
-
-	return role, resp, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

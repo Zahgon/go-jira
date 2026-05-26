@@ -2,8 +2,6 @@ package cloud
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 )
 
 // ComponentService represents project components.
@@ -59,38 +57,16 @@ type ComponentCreateOptions struct {
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-components/#api-rest-api-3-component-post
 func (s *ComponentService) Create(ctx context.Context, options *ComponentCreateOptions) (*ProjectComponent, *Response, error) {
-	apiEndpoint := "rest/api/3/component"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, options)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	component := new(ProjectComponent)
-	resp, err := s.client.Do(req, component)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return component, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Get returns a component for the given componentID.
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-components/#api-rest-api-3-component-id-get
 func (s *ComponentService) Get(ctx context.Context, componentID string) (*ProjectComponent, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/3/component/%s", componentID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	component := new(ProjectComponent)
-	resp, err := s.client.Do(req, component)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return component, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // TODO Add "Update component" method. See https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-components/#api-rest-api-3-component-id-put

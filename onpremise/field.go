@@ -2,7 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"net/http"
 )
 
 // FieldService handles fields for the Jira instance / API.
@@ -39,16 +38,6 @@ type FieldSchema struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *FieldService) GetList(ctx context.Context) ([]Field, *Response, error) {
-	apiEndpoint := "rest/api/2/field"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	fieldList := []Field{}
-	resp, err := s.client.Do(req, &fieldList)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return fieldList, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

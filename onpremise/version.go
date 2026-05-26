@@ -2,9 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 )
 
 // VersionService handles Versions for the Jira instance / API.
@@ -33,18 +30,8 @@ type Version struct {
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *VersionService) Get(ctx context.Context, versionID int) (*Version, *Response, error) {
-	apiEndpoint := fmt.Sprintf("/rest/api/2/version/%v", versionID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	version := new(Version)
-	resp, err := s.client.Do(req, version)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-	return version, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Create creates a version in Jira.
@@ -54,25 +41,8 @@ func (s *VersionService) Get(ctx context.Context, versionID int) (*Version, *Res
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *VersionService) Create(ctx context.Context, version *Version) (*Version, *Response, error) {
-	apiEndpoint := "/rest/api/2/version"
-	req, err := s.client.NewRequest(ctx, http.MethodPost, apiEndpoint, version)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return nil, resp, err
-	}
-	defer resp.Body.Close()
-
-	responseVersion := new(Version)
-	err = json.NewDecoder(resp.Body).Decode(&responseVersion)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return responseVersion, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Update updates a version from a JSON representation.
@@ -83,19 +53,9 @@ func (s *VersionService) Create(ctx context.Context, version *Version) (*Version
 // TODO Double check this method if this works as expected, is using the latest API and the response is complete
 // This double check effort is done for v2 - Remove this two lines if this is completed.
 func (s *VersionService) Update(ctx context.Context, version *Version) (*Version, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/version/%v", version.ID)
-	req, err := s.client.NewRequest(ctx, http.MethodPut, apiEndpoint, version)
-	if err != nil {
-		return nil, nil, err
-	}
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
-	}
-
-	// This is just to follow the rest of the API's convention of returning a version.
-	// Returning the same pointer here is pointless, so we return a copy instead.
-	ret := *version
-	return &ret, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// This is just to follow the rest of the API's convention of returning a version.
+// Returning the same pointer here is pointless, so we return a copy instead.

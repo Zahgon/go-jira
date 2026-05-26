@@ -2,9 +2,6 @@ package onpremise
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"net/http"
 )
 
 // StatusCategoryService handles status categories for the Jira instance / API.
@@ -37,19 +34,8 @@ const (
 //
 // Jira API docs: https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/#api/2/statuscategory-getStatusCategories
 func (s *StatusCategoryService) GetList(ctx context.Context) ([]StatusCategory, *Response, error) {
-	apiEndpoint := "/rest/api/2/statuscategory"
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var statusCategories []StatusCategory
-	resp, err := s.client.Do(req, &statusCategories)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return statusCategories, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Get returns a full representation of the StatusCategory having the given id or key.
@@ -58,21 +44,6 @@ func (s *StatusCategoryService) GetList(ctx context.Context) ([]StatusCategory, 
 //
 // Jira API docs: https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/#api/2/statuscategory-getStatusCategory
 func (s *StatusCategoryService) Get(ctx context.Context, statusCategoryID string) (*StatusCategory, *Response, error) {
-	if statusCategoryID == "" {
-		return nil, nil, errors.New("no status category id set")
-	}
-
-	apiEndpoint := fmt.Sprintf("/rest/api/2/statuscategory/%v", statusCategoryID)
-	req, err := s.client.NewRequest(ctx, http.MethodGet, apiEndpoint, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	statusCategory := new(StatusCategory)
-	resp, err := s.client.Do(req, statusCategory)
-	if err != nil {
-		return nil, resp, NewJiraError(resp, err)
-	}
-
-	return statusCategory, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
